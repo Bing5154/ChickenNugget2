@@ -9,6 +9,7 @@ class Ball {
   float speed, direction, x, y, xPos, yPos;
   color c;
   
+  //default constructor
   Ball() {
     c = color(random(256),random(256),random(256)); //set to random color
     speed = random(10);   //set to random speed
