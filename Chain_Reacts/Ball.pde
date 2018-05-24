@@ -6,20 +6,33 @@ Hw#53 - All That Bouncin'
 class Ball {
   
   //instance (global) variables 
-  float speed, direction, x, y, xPos, yPos;
+  float dX, dY, xPos, yPos;
   color c;
+  final static int MOVING = 0;
+  final static int GROWING = 1;
+  final static int SHRINKING = 2;
+  final static int DEAD = 3;
+  final float CHANGE_FACTOR = .25;
+  final float MAX_RADIUS = 50;
+  int state;
   
   //default constructor
   Ball() {
     c = color(random(256),random(256),random(256)); //set to random color
-    speed = random(10);   //set to random speed
-    direction = radians(random(360));  //set a random angle 
     //a ball must know where it's going AND how fast it's going --> velocity
-    x = speed * cos(direction); //velocity in the x-direction
-    y = speed * sin(direction); //velocity in the y-direction
+    dX = random(5) * cos(random(TWO_PI)); //velocity in the x-direction
+    dY = random(5) * sin(random(TWO_PI)); //velocity in the y-direction
     //the birth place of all our balls
-    xPos = 300;  
-    yPos = 300;  
+    xPos = 300;
+    yPos = 300;
+    state = 0;
+  }
+  
+  Ball(int newState, float newXPos, float newYPos) {
+    this();
+    state = newState;
+    xPos = newXPos;
+    yPos = newYPos;
   }
   
   //Fill each Ball with a random color
@@ -30,17 +43,21 @@ class Ball {
   void move() {
     fill(c);
     ellipse(xPos,yPos,10,10);
-    xPos += x;
-    yPos += y;
+    xPos += dX;
+    yPos += dY;
     if ((yPos <= 0) || (yPos >= 600)) {
-      direction *= -1;
-      x = speed * cos(direction);
-      y = speed * sin(direction);
+      dY *= -1;
     }
     if ((xPos <= 0) || (xPos >= 600)) {
-      direction = PI - direction;
-      x = speed * cos(direction);
-      y = speed * sin(direction);
+      dX *= -1;
     }
   }
+    
+  void grow() {
   }
+  
+  void shrink() {
+  }
+  
+
+}
