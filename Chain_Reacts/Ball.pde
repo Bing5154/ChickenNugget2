@@ -6,7 +6,7 @@ Hw#53 - All That Bouncin'
 class Ball {
   
   //instance (global) variables 
-  float dX, dY, xPos, yPos;
+  float dX, dY, xPos, yPos, r;
   color c;
   final static int MOVING = 0;
   final static int GROWING = 1;
@@ -25,14 +25,16 @@ class Ball {
     //the birth place of all our balls
     xPos = 300;
     yPos = 300;
-    state = 0;
+    state = MOVING;
+    r = 10;
   }
   
-  Ball(int newState, float newXPos, float newYPos) {
+  //constructor for mousePressed balls
+  Ball(int newState, float mouseXPos, float mouseYPos) {
     this();
     state = newState;
-    xPos = newXPos;
-    yPos = newYPos;
+    xPos = mouseXPos;
+    yPos = mouseYPos;
   }
   
   //Fill each Ball with a random color
@@ -41,22 +43,61 @@ class Ball {
   //Xpos and Ypos of the Ball are updated as it moves
   //If the Ball reaches the boundary, bounces off the boundary by changing its dirn
   void move() {
-    fill(c);
-    ellipse(xPos,yPos,10,10);
-    xPos += dX;
-    yPos += dY;
     if ((yPos <= 0) || (yPos >= 600)) {
       dY *= -1;
     }
     if ((xPos <= 0) || (xPos >= 600)) {
       dX *= -1;
     }
-  }
-    
-  void grow() {
+    xPos += dX;
+    yPos += dY;
+    fill(c);
+    ellipse(xPos,yPos,r,r);    
   }
   
+  //compares ball with rest of balls in list
+  //if a growing ball is overlapping with a moving ball, moving ball starts growing
+  void check(Ball[] ballList) {
+    for (int x = 0; x < ballList.length; x++) {
+      float xDiff = ballList[x].xPos - xPos;
+      float yDiff = ballList[x].yPos - yPos;
+      float sumR = ballList[x].r + r;
+      if ((pow(xDiff, 2) + pow(yDiff, 2) <= pow(sumR, 2)) && 
+         (state == MOVING) &&
+         ((ballList[x].state == GROWING) || (ballList[x].state == SHRINKING))){
+         state = GROWING;
+      }
+    }
+  }
+  
+  //grows until it reaches threshold radius, starts shrinking afterwards
+  void grow() {
+    if (r >= MAX_RADIUS)
+      state = SHRINKING;
+    r += CHANGE_FACTOR;      
+    fill(c);
+    ellipse(xPos,yPos,r,r);
+  }
+  
+  //shrinks until it reaches radius of 0, turns dead afterwards
   void shrink() {
+    if (r <= 0)
+      state = DEAD;
+    r -= CHANGE_FACTOR;      
+    fill(c);
+    ellipse(xPos,yPos,r,r);      
+  }
+  
+  //determines the ball's action based on state
+  void update(Ball[] ballList) {
+    if (state == MOVING) {
+      move();
+      check(ballList);      
+    } else if (state == GROWING) {
+      grow();
+    } else if (state == SHRINKING) {
+      shrink();
+    }
   }
   
 

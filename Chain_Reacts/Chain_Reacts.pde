@@ -5,7 +5,7 @@ Hw#53 - All That Bouncin'
 
 
 //Create an array lists of 25 balls
-Ball[] ballList = new Ball[26];
+Ball[] ballList = new Ball[25];
 //Run once upon start of the program:
 //   - background color is set to black
 //   - size of the screen is set to 600 x 600
@@ -13,7 +13,8 @@ Ball[] ballList = new Ball[26];
 void setup() {
   background(0);
   size(600, 600);
-  for (int x = 0; x < ballList.length - 1; x++) {
+  ellipseMode(RADIUS);
+  for (int x = 0; x < ballList.length; x++) {
     ballList[x] = new Ball();
   }
 }
@@ -23,18 +24,16 @@ void setup() {
 // for every Ball in ballList, call the move method
 void draw() {
   background(0);
-  for (int x = 0; x < ballList.length - 1; x++) {
-    if (ballList[x].state == 0)
-      ballList[x].move();
-    else if (ballList[x].state == 1)
-      ballList[x].grow();
-    else if (ballList[x].state == 2)
-      ballList[x].shrink();
-    else
-      ballList[x].state = 4;
+  for (int x = 0; x < ballList.length; x++) {
+    ballList[x].update(ballList);
   }
 }
 
-void MouseClicked() {
-  ballList[ballList.length - 1] = new Ball(1, mouseX, mouseY);
+void mousePressed() {
+  Ball[] temp = new Ball[ballList.length + 1];
+  for (int x = 0; x < ballList.length; x++) {
+    temp[x] = ballList[x];
+  }
+  temp[temp.length - 1] = new Ball(1, mouseX, mouseY);
+  ballList = temp;
 }
